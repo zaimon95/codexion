@@ -6,7 +6,7 @@
 /*   By: sla-gran <sla-gran@student.42belgium.      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/14 14:17:06 by sla-gran          #+#    #+#             */
-/*   Updated: 2026/06/14 14:31:11 by sla-gran         ###   ########.fr       */
+/*   Updated: 2026/06/15 11:04:22 by sla-gran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,5 @@
 # define CODEXION_H
 
 # include <pthread.h>
-
 
 #endif
