@@ -1,42 +1,41 @@
 NAME := codexion
 
 CC := cc
-CFLAGS := -Wall -Wextra -Werror -MMD -MP -g
+CFLAGS := -Wall -Wextra -Werror -MMD -MP -g -pthread
 
 SRCDIR := src
 OBJDIR := build
 
-SRC := $(SRCDIR)/codexion.c
+SRC := $(SRCDIR)/main.c \
+			 $(SRCDIR)/args.c \
+			 $(SRCDIR)/args_utils.c \
+			 $(SRCDIR)/utils.c \
+			 $(SRCDIR)/init.c \
+			 $(SRCDIR)/heap.c \
+			 $(SRCDIR)/dongle.c \
+			 $(SRCDIR)/coder.c \
+			 $(SRCDIR)/monitor.c
 
 OBJ := $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 
 DEPS := $(OBJ:.o=.d)
 
-LIBFT_DIR = libft
-LIBFT = $(LIBFT_DIR)/libft.a
-
 INCLUDES = -I$(SRCDIR) -I.
 
 all: $(NAME)
 
-$(LIBFT):
-	make -C $(LIBFT_DIR) --no-print-directory
-
-$(NAME): $(LIBFT) $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
+$(NAME): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	make clean -C $(LIBFT_DIR) --no-print-directory
-
 	rm -rf $(OBJDIR)
 
 fclean: clean
-	make fclean -C $(LIBFT_DIR) --no-print-directory
 	rm -f $(NAME)
 
 re: fclean all
