@@ -6,7 +6,7 @@
 /*   By: sla-gran <sla-gran@student.42belgium.      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/14 14:17:06 by sla-gran          #+#    #+#             */
-/*   Updated: 2026/06/30 16:36:42 by sla-gran         ###   ########.fr       */
+/*   Updated: 2026/07/01 12:29:35 by sla-gran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ void		fill_params(char **argv, t_params *p);
 
 /* init.c */
 int			init_sim(t_sim *sim);
+
+/* cleanup.c */
 void		cleanup_sim(t_sim *sim);
 
 /* heap.c */

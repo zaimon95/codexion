@@ -14,7 +14,8 @@ SRC := $(SRCDIR)/main.c \
 			 $(SRCDIR)/heap.c \
 			 $(SRCDIR)/dongle.c \
 			 $(SRCDIR)/coder.c \
-			 $(SRCDIR)/monitor.c
+			 $(SRCDIR)/monitor.c \
+			 $(SRCDIR)/cleanup.c
 
 OBJ := $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
