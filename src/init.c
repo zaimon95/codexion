@@ -5,12 +5,16 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sla-gran <sla-gran@student.42belgium.      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/22 12:48:54 by sla-gran          #+#    #+#             */
-/*   Updated: 2026/07/01 12:29:47 by sla-gran         ###   ########.fr       */
+/*   Created: 2026/07/10 10:32:24 by sla-gran          #+#    #+#             */
+/*   Updated: 2026/07/10 10:32:26 by sla-gran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
+
+/* ---------------------------------------------------------------- */
+/*  Initialisation des dongles                                       */
+/* ---------------------------------------------------------------- */
 
 static int	init_one_dongle(t_dongle *d, int nb_coders)
 {
@@ -58,6 +62,14 @@ static int	init_dongles(t_sim *sim)
 	return (1);
 }
 
+/* ---------------------------------------------------------------- */
+/*  Initialisation des coders                                        */
+/*                                                                   */
+/*  Disposition circulaire :                                         */
+/*  coder i -> dongle gauche = (i - 1 + N) % N                       */
+/*             dongle droit  = i                                     */
+/* ---------------------------------------------------------------- */
+
 static void	init_coders(t_sim *sim)
 {
 	int	i;
@@ -77,6 +89,10 @@ static void	init_coders(t_sim *sim)
 	}
 }
 
+/* ---------------------------------------------------------------- */
+/*  Initialisation des deux mutex globaux (log + stop)               */
+/* ---------------------------------------------------------------- */
+
 static int	init_mutexes(t_sim *sim)
 {
 	if (pthread_mutex_init(&sim->log_mutex, NULL) != 0)
@@ -88,6 +104,10 @@ static int	init_mutexes(t_sim *sim)
 	}
 	return (1);
 }
+
+/* ---------------------------------------------------------------- */
+/*  init_sim                                                          */
+/* ---------------------------------------------------------------- */
 
 int	init_sim(t_sim *sim)
 {

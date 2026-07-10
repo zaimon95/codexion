@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sla-gran <sla-gran@student.42belgium.      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/14 14:17:06 by sla-gran          #+#    #+#             */
-/*   Updated: 2026/07/01 12:29:35 by sla-gran         ###   ########.fr       */
+/*   Created: 2026/07/10 10:26:36 by sla-gran          #+#    #+#             */
+/*   Updated: 2026/07/10 10:35:33 by sla-gran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,24 @@
 # include <string.h>
 # include <unistd.h>
 
+/* ================================================================ */
+/*  Scheduler                                                        */
+/* ================================================================ */
+
 typedef enum e_scheduler
 {
 	SCHEDULER_FIFO,
 	SCHEDULER_EDF
 }	t_scheduler;
 
+/* ================================================================ */
+/*  Min-heap (file de priorité) — un nœud = un coder en attente     */
+/* ================================================================ */
+
 typedef struct s_heap_node
 {
 	int			coder_id;
-	long long	priority;
+	long long	priority;	/* FIFO: timestamp arrivée | EDF: deadline */
 }	t_heap_node;
 
 typedef struct s_heap
@@ -38,6 +46,10 @@ typedef struct s_heap
 	int			size;
 	int			capacity;
 }	t_heap;
+
+/* ================================================================ */
+/*  Paramètres de simulation (argv parsé une fois, puis read-only)  */
+/* ================================================================ */
 
 typedef struct s_params
 {
@@ -51,40 +63,60 @@ typedef struct s_params
 	t_scheduler	scheduler;
 }	t_params;
 
+/* ================================================================ */
+/*  Forward declaration (t_coder référence t_sim, et vice versa)    */
+/* ================================================================ */
+
 typedef struct s_sim	t_sim;
+
+/* ================================================================ */
+/*  Dongle USB                                                       */
+/* ================================================================ */
 
 typedef struct s_dongle
 {
 	pthread_mutex_t	mutex;
 	pthread_cond_t	cond;
-	int				available;
-	long long		cooldown_until;
-	t_heap			wait_queue;
+	int				available;		/* 1 = libre, 0 = pris */
+	long long		cooldown_until;	/* timestamp (ms) fin du cooldown */
+	t_heap			wait_queue;		/* coders en attente (heap) */
 }	t_dongle;
+
+/* ================================================================ */
+/*  Coder = un thread POSIX                                         */
+/* ================================================================ */
 
 typedef struct s_coder
 {
 	int			id;
 	int			compile_count;
-	long long	last_compile_start;
+	long long	last_compile_start;	/* pour burnout + deadline EDF */
 	pthread_t	thread;
-	t_sim		*sim;
-	int			left_idx;
-	int			right_idx;
+	t_sim		*sim;				/* accès à la simulation */
+	int			left_idx;			/* index du dongle gauche */
+	int			right_idx;			/* index du dongle droit */
 }	t_coder;
+
+/* ================================================================ */
+/*  Simulation — état global passé PAR POINTEUR, jamais global var  */
+/* ================================================================ */
 
 struct s_sim
 {
 	t_params		params;
 	t_coder			*coders;
 	t_dongle		*dongles;
-	long long		start_time;
-	pthread_mutex_t	log_mutex;
-	pthread_mutex_t	stop_mutex;
-	int				running;
-	int				burnout_coder;
+	long long		start_time;		/* timestamp (ms) début simulation */
+	pthread_mutex_t	log_mutex;		/* sérialiser les printf */
+	pthread_mutex_t	stop_mutex;		/* protéger running + burnout_coder */
+	int				running;		/* 1 = en cours | 0 = arrêt demandé */
+	int				burnout_coder;	/* id du coder brûlé (-1 si aucun) */
 	pthread_t		monitor_thread;
 };
+
+/* ================================================================ */
+/*  Prototypes — organisés par fichier source                       */
+/* ================================================================ */
 
 /* utils.c */
 long long	get_time_ms(void);
@@ -97,14 +129,11 @@ void		sim_stop(t_sim *sim);
 int			parse_args(int argc, char **argv, t_params *params);
 
 /* args_utils.c */
-int			is_valid_int(char *str);
 int			validate_numeric_args(char **argv);
 void		fill_params(char **argv, t_params *p);
 
 /* init.c */
 int			init_sim(t_sim *sim);
-
-/* cleanup.c */
 void		cleanup_sim(t_sim *sim);
 
 /* heap.c */
@@ -113,6 +142,12 @@ void		heap_destroy(t_heap *heap);
 int			heap_insert(t_heap *heap, int coder_id, long long priority);
 t_heap_node	heap_extract_min(t_heap *heap);
 int			heap_is_empty(t_heap *heap);
+
+/* heap_utils.c */
+void		swap_nodes(t_heap_node *a, t_heap_node *b);
+void		heapify_up(t_heap *heap, int idx);
+void		heapify_down(t_heap *heap, int idx);
+int			smallest_child(t_heap *heap, int idx);
 
 /* dongle.c */
 void		take_dongle(t_sim *sim, int dongle_idx, t_coder *coder);

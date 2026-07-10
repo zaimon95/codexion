@@ -1,28 +1,26 @@
-NAME := codexion
+NAME    := codexion
+CC      := cc
+CFLAGS  := -Wall -Wextra -Werror -MMD -MP -g -pthread
 
-CC := cc
-CFLAGS := -Wall -Wextra -Werror -MMD -MP -g -pthread
-
-SRCDIR := src
-OBJDIR := build
+SRCDIR  := src
+OBJDIR  := build
 
 SRC := $(SRCDIR)/main.c \
-			 $(SRCDIR)/args.c \
-			 $(SRCDIR)/args_utils.c \
-			 $(SRCDIR)/utils.c \
-			 $(SRCDIR)/init.c \
-			 $(SRCDIR)/heap.c \
-			 $(SRCDIR)/dongle.c \
-			 $(SRCDIR)/coder.c \
-			 $(SRCDIR)/monitor.c \
-			 $(SRCDIR)/cleanup.c
+       $(SRCDIR)/args.c \
+	   $(SRCDIR)/args_utils.c \
+       $(SRCDIR)/utils.c \
+       $(SRCDIR)/init.c \
+       $(SRCDIR)/cleanup.c \
+       $(SRCDIR)/heap.c \
+       $(SRCDIR)/heap_utils.c \
+       $(SRCDIR)/dongle.c \
+       $(SRCDIR)/coder.c \
+       $(SRCDIR)/monitor.c
 
-OBJ := $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
-
-
+OBJ  := $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 DEPS := $(OBJ:.o=.d)
 
-INCLUDES = -I$(SRCDIR) -I.
+INCLUDES := -I$(SRCDIR)
 
 all: $(NAME)
 

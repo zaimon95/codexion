@@ -6,7 +6,7 @@
 /*   By: sla-gran <sla-gran@student.42belgium.      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/22 12:51:27 by sla-gran          #+#    #+#             */
-/*   Updated: 2026/07/03 14:01:21 by sla-gran         ###   ########.fr       */
+/*   Updated: 2026/07/10 10:36:39 by sla-gran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	take_dongle(t_sim *sim, int dongle_idx, t_coder *coder)
 	(void)sim;
 	(void)dongle_idx;
 	(void)coder;
-	sim->
 	/* TODO : lock le mutex du dongle, attendre qu'il soit libre,
 	** respecter le cooldown, utiliser le scheduler (FIFO/EDF) */
 }
