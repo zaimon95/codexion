@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sla-gran <sla-gran@student.42belgium.      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/10 10:26:36 by sla-gran          #+#    #+#             */
-/*   Updated: 2026/07/10 10:35:33 by sla-gran         ###   ########.fr       */
+/*   Created: 2026/07/16 10:57:19 by sla-gran          #+#    #+#             */
+/*   Updated: 2026/07/16 10:57:24 by sla-gran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ typedef struct s_dongle
 	pthread_cond_t	cond;
 	int				available;		/* 1 = libre, 0 = pris */
 	long long		cooldown_until;	/* timestamp (ms) fin du cooldown */
+	long long		next_ticket;	/* compteur de tickets d'arrivee */
 	t_heap			wait_queue;		/* coders en attente (heap) */
 }	t_dongle;
 
@@ -128,10 +129,6 @@ void		sim_stop(t_sim *sim);
 /* args.c */
 int			parse_args(int argc, char **argv, t_params *params);
 
-/* args_utils.c */
-int			validate_numeric_args(char **argv);
-void		fill_params(char **argv, t_params *p);
-
 /* init.c */
 int			init_sim(t_sim *sim);
 void		cleanup_sim(t_sim *sim);
@@ -148,10 +145,15 @@ void		swap_nodes(t_heap_node *a, t_heap_node *b);
 void		heapify_up(t_heap *heap, int idx);
 void		heapify_down(t_heap *heap, int idx);
 int			smallest_child(t_heap *heap, int idx);
+t_heap_node	heap_peek(t_heap *heap);
 
 /* dongle.c */
-void		take_dongle(t_sim *sim, int dongle_idx, t_coder *coder);
+int			take_dongle(t_sim *sim, int dongle_idx, t_coder *coder);
 void		release_dongle(t_sim *sim, int dongle_idx);
+
+/* dongle_utils.c */
+long long	compute_priority(t_sim *sim, t_coder *coder, long long ticket);
+int			wait_for_turn(t_sim *sim, t_dongle *d, t_coder *coder);
 
 /* coder.c */
 void		*coder_routine(void *arg);

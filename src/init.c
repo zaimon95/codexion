@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sla-gran <sla-gran@student.42belgium.      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/10 10:32:24 by sla-gran          #+#    #+#             */
-/*   Updated: 2026/07/10 10:32:26 by sla-gran         ###   ########.fr       */
+/*   Created: 2026/07/16 10:57:37 by sla-gran          #+#    #+#             */
+/*   Updated: 2026/07/16 10:57:40 by sla-gran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ static int	init_one_dongle(t_dongle *d, int nb_coders)
 	}
 	d->available = 1;
 	d->cooldown_until = 0;
+	d->next_ticket = 0;
 	if (!heap_init(&d->wait_queue, nb_coders))
 	{
 		pthread_cond_destroy(&d->cond);

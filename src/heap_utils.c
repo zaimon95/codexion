@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sla-gran <sla-gran@student.42belgium.      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/10 10:25:22 by sla-gran          #+#    #+#             */
-/*   Updated: 2026/07/10 10:25:25 by sla-gran         ###   ########.fr       */
+/*   Created: 2026/07/16 10:56:38 by sla-gran          #+#    #+#             */
+/*   Updated: 2026/07/16 10:56:40 by sla-gran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,4 +76,21 @@ void	heapify_down(t_heap *heap, int idx)
 		idx = smallest;
 		smallest = smallest_child(heap, idx);
 	}
+}
+
+/*
+** Renvoie le noeud de plus petite priorite sans le retirer du heap.
+** Si le heap est vide, coder_id vaut -1 (aucun coder ne matchera).
+*/
+t_heap_node	heap_peek(t_heap *heap)
+{
+	t_heap_node	empty;
+
+	if (heap->size == 0)
+	{
+		empty.coder_id = -1;
+		empty.priority = 0;
+		return (empty);
+	}
+	return (heap->nodes[0]);
 }
