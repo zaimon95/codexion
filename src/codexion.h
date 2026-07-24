@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sla-gran <sla-gran@student.42belgium.      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/16 10:57:19 by sla-gran          #+#    #+#             */
-/*   Updated: 2026/07/16 10:57:24 by sla-gran         ###   ########.fr       */
+/*   Created: 2026/07/24 10:11:40 by sla-gran          #+#    #+#             */
+/*   Updated: 2026/07/24 10:11:41 by sla-gran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,13 +89,14 @@ typedef struct s_dongle
 
 typedef struct s_coder
 {
-	int			id;
-	int			compile_count;
-	long long	last_compile_start;	/* pour burnout + deadline EDF */
-	pthread_t	thread;
-	t_sim		*sim;				/* accès à la simulation */
-	int			left_idx;			/* index du dongle gauche */
-	int			right_idx;			/* index du dongle droit */
+	int				id;
+	int				compile_count;
+	long long		last_compile_start;	/* pour burnout + deadline EDF */
+	pthread_mutex_t	state_mutex;		/* protege les 2 champs ci-dessus */
+	pthread_t		thread;
+	t_sim			*sim;				/* accès à la simulation */
+	int				left_idx;			/* index du dongle gauche */
+	int				right_idx;			/* index du dongle droit */
 }	t_coder;
 
 /* ================================================================ */
@@ -131,7 +132,11 @@ int			parse_args(int argc, char **argv, t_params *params);
 
 /* init.c */
 int			init_sim(t_sim *sim);
+
+/* cleanup.c */
 void		cleanup_sim(t_sim *sim);
+void		destroy_dongles(t_sim *sim, int count);
+void		destroy_mutexes(t_sim *sim);
 
 /* heap.c */
 int			heap_init(t_heap *heap, int capacity);
@@ -161,4 +166,4 @@ void		*coder_routine(void *arg);
 /* monitor.c */
 void		*monitor_routine(void *arg);
 
-#endif
+#endifendif

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sla-gran <sla-gran@student.42belgium.      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/16 10:57:37 by sla-gran          #+#    #+#             */
-/*   Updated: 2026/07/16 10:57:40 by sla-gran         ###   ########.fr       */
+/*   Created: 2026/07/24 10:11:36 by sla-gran          #+#    #+#             */
+/*   Updated: 2026/07/24 10:11:37 by sla-gran         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static int	init_dongles(t_sim *sim)
 /*             dongle droit  = i                                     */
 /* ---------------------------------------------------------------- */
 
-static void	init_coders(t_sim *sim)
+static int	init_coders(t_sim *sim)
 {
 	int	i;
 	int	n;
@@ -86,8 +86,15 @@ static void	init_coders(t_sim *sim)
 		sim->coders[i].sim = sim;
 		sim->coders[i].left_idx = (i - 1 + n) % n;
 		sim->coders[i].right_idx = i;
+		if (pthread_mutex_init(&sim->coders[i].state_mutex, NULL) != 0)
+		{
+			while (--i >= 0)
+				pthread_mutex_destroy(&sim->coders[i].state_mutex);
+			return (0);
+		}
 		i++;
 	}
+	return (1);
 }
 
 /* ---------------------------------------------------------------- */
@@ -120,17 +127,21 @@ int	init_sim(t_sim *sim)
 	sim->coders = malloc(sizeof(t_coder) * sim->params.nb_coders);
 	if (!sim->coders)
 	{
-		pthread_mutex_destroy(&sim->stop_mutex);
-		pthread_mutex_destroy(&sim->log_mutex);
+		destroy_mutexes(sim);
 		return (0);
 	}
 	if (!init_dongles(sim))
 	{
 		free(sim->coders);
-		pthread_mutex_destroy(&sim->stop_mutex);
-		pthread_mutex_destroy(&sim->log_mutex);
+		destroy_mutexes(sim);
 		return (0);
 	}
-	init_coders(sim);
+	if (!init_coders(sim))
+	{
+		destroy_dongles(sim, sim->params.nb_coders);
+		free(sim->coders);
+		destroy_mutexes(sim);
+		return (0);
+	}
 	return (1);
 }
